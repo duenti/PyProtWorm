@@ -1,4 +1,9 @@
 from setuptools import setup
+from os import path
+
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name='PyProtWorm',
@@ -10,11 +15,13 @@ setup(
     license='Apache License 2.0',
     packages=['PyProtWorm'],
     install_requires=[],
+    long_description=long_description,
+    long_description_content_type='text/markdown',
 
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
-        'License :: Apache License 2.0',  
+        'License :: OSI Approved :: Apache Software License',  
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
