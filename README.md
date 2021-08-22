@@ -32,6 +32,11 @@ The *min_year* parameter can be applied to retrieve only recently published pape
     finder = Finder()
     finder.search("P00698", database="uniprot", min_year=2019)
 
+Stopped jobs can be resumed from the same point when it was aborted. To do it, you need to inform the *cursor* parameter in the search method. The current cursor id can be found in the last row of your result file. Finally, you need to make sure not to overwrite the previous result file.
+
+    finder = Finder()
+    finder.search("P00698", database="uniprot", cursor="AoIIPyzELSgyNzg5NjQ3OQ==")
+
 There's no paper to cite right now. For now, if you use this tool please cite:
 
 > da Fonseca, Neli et al., 2021 **ProtWorm: A computational tool to find amino acid residues citations** available at http://bioinfo.icb.ufmg.br/protworm.

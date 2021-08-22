@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='PyProtWorm',
-    version='0.1.0',    
+    version='0.1.2',    
     description='A python package to find amino acid residues in the literature',
     url='https://github.com/duenti/PyProtWorm',
     author='Neli Fonseca',

@@ -11,6 +11,7 @@ class Finder:
 		self.clean_re = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
 		self.file_writer = open(output_file, 'w')
 		self.any_case = any_case
+		self.file_writer.write("\tRESIDUE\tPAPER_ID\tSOURCE\tPHRASE\tNEXT_CURSOR")
 
 	def __minePMC(self, pmc_id):
 		"""
@@ -50,11 +51,15 @@ class Finder:
 		Execute crawler
 		"""
 		i = 1
+		read = 0
 		while True:
 			raw_data = requests.post(self.url, data = post_data)
 			data = json.loads(raw_data.text)
 			nextCursor = data['nextCursorMark'] if 'nextCursorMark' in data else ''
 			hitCount = data['hitCount'] if 'hitCount' in data else 0
+			read += self.pageSize if self.pageSize < hitCount else hitCount
+			read = hitCount if nextCursor == '' else read
+			print(f'Reading {read} of {hitCount}: Next cursor is: {nextCursor}')
 
 			if hitCount > 0:
 				result = data['resultList']['result']
@@ -72,10 +77,10 @@ class Finder:
 							element = element.replace("\n"," ")
 							residues = self.__extractResidues(element)
 							for residue in residues:
-								row = f"{residue}\t{pmcid}\tPMC\t{element}"
+								row = f"{residue}\t{pmcid}\tPMC\t{element}\t{nextCursor}"
 								self.file_writer.write(row + "\n")
 								self.file_writer.flush()
-								print(row)
+								#print(row)
 					else:
 						#Mine abstract
 						abstract = result['abstractText'] if 'abstractText' in result else ''
@@ -83,10 +88,10 @@ class Finder:
 							element = element.replace("\n"," ")
 							residues = self.__extractResidues(element)
 							for residue in residues:
-								row = f"{residue}\t{pubid}\t{source}\t{element}"
+								row = f"{residue}\t{pubid}\t{source}\t{element}\t{nextCursor}"
 								self.file_writer.write(row + "\n")
 								self.file_writer.flush()
-								print(row)
+								#print(row)
 			else:
 				break
 
@@ -96,7 +101,7 @@ class Finder:
 				post_data['cursorMark'] = nextCursor
 				i+=1
 
-	def search(self, idt, database="", min_year=None):
+	def search(self, idt, database="", min_year=None, cursor=None):
 		"""
 		Search by UniProt id
 		"""
@@ -128,6 +133,10 @@ class Finder:
 			'resultType': 'core',
 			'pageSize' : self.pageSize,
 		}
+
+		if cursor:
+			data['cursorMark'] = cursor
+
 		self.__crawl(data)
 
 
